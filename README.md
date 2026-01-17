@@ -1,0 +1,2 @@
+# AI_CodeFeeder_by_py
+众所周知，大多数ai不允许直接上传代码文件。劳累了一天的人们往往还要不厌其烦地复制粘贴，或者通过studio内置的AI实现代码dubug，效率低下且不够优雅。因此CodesFeeder诞生了。
