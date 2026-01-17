@@ -7,7 +7,7 @@
 >
 > 拒绝繁琐的复制粘贴，让 AI 更懂你的代码架构。
 
-## 📖 简介 (Introduction)
+## 📖 简介 
 
 **众所周知，大多数 AI（如 DeepSeek,豆包,ChatGPT, Claude, Gemini）不允许直接上传代码文件夹。**
 
@@ -136,13 +136,13 @@ C
 // ... 代码内容 ...
 ```
 
-```
 
-## 👨‍💻 作者 (Author)
+
+## 👨‍💻 版本与作者
 
 **AI_CodeFeeder V1.0.5**
 Coded by **ChaoPhone**
 
 ---
 *Happy Coding!*
-```
+
