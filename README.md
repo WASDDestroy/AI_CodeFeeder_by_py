@@ -28,7 +28,7 @@
 
 ### 2. 使用方法
 
-1. 下载 `AI_CodeFeeder.py` 到任意位置。
+1. 下载 `AI_CodeFeeder.py` 和 `config.json` 到同一目录。
 
 2. 运行脚本：
 
@@ -54,47 +54,59 @@
 
 ## ⚙️ 配置说明
 
-你可以直接打开 `AI_CodeFeeder.py` 修改顶部的配置区域，以适应不同项目：
+从 V1.0.8 版本开始，配置已经分离到单独的 config.json 文件中，你可以直接编辑该文件来调整各种过滤规则。
 
 ### 1. 包含的文件类型
 
-修改 `ALLOWED_EXTENSIONS` 集合：
+在 config.json 中修改 allowed_extensions 数组：
 
-Python
+JSON
 
 ```
-ALLOWED_EXTENSIONS = {
-    '.py', '.java', '.cpp', '.c', '.h', '.js', '.ts', 
-    '.cs', '.shader', '.md', '.txt' 
-    # ... 添加你需要的文件后缀
-}
+"allowed_extensions": [
+  ".py", ".java", ".cpp", ".c", ".h", ".js", ".ts", ".html", ".m",
+  ".css", ".sql", ".md", ".yaml", ".yml", ".xml",
+  ".cs", ".shader", ".compute", ".cginc", ".txt"
+]
 ```
 
 ### 2. 忽略的目录
 
-修改 `IGNORE_DIRS` 集合。代码已默认内置了以下屏蔽规则：
+在 config.json 中修改 ignore_dirs 数组。代码已默认内置了以下屏蔽规则：
 
-* **通用**：`.git`, `.vscode`, `node_modules`, `venv`
+* **通用**：`.git`, `.idea`, `.vscode`, `__pycache__`, `venv`, `env`, `node_modules`, `.DS_Store`
 
-* **编译产物**：`build`, `dist`, `bin`, `obj`, `cmake-build-*`
+* **编译产物**：`build`, `dist`, `bin`, `obj`, `cmake-build-debug`, `cmake-build-release`, `gradle`, `.gradle`
 
-* **STM32/嵌入式**：`Drivers` (巨大的库文件), `Middlewares`, `MDK-ARM`
+* **STM32/嵌入式**：`Drivers`, `Middlewares`, `CMSIS`, `MDK-ARM`, `EWARM`, `cmake`, `DebugVals`, `Docs`, `Doc`
 
-* **Unity**：`Library`, `Temp`, `Logs`
+* **Unity**：`Library`, `Temp`, `Logs`, `UserSettings`, `Packages`
 
 ### 3. 忽略特定前缀文件 (CubeMX 专用)
 
-修改 `IGNORE_PREFIXES`。这对于保持上下文简洁非常重要，它屏蔽了大量自动生成的冗余代码：
+在 config.json 中修改 ignore_prefixes 数组。这对于保持上下文简洁非常重要，它屏蔽了大量自动生成的冗余代码：
 
-Python
+JSON
 
 ```
-IGNORE_PREFIXES = {
-    'stm32f4xx_it',       # 忽略中断处理存根
-    'system_stm32f4xx',   # 忽略系统初始化
-    'stm32f4xx_hal_conf', # 忽略HAL配置
-    # ...
-}
+"ignore_prefixes": [
+  "stm32f4xx_it", "system_stm32f4xx", "stm32f4xx_hal_conf",
+  "stm32f4xx_hal_msp", "sysmem", "syscalls",
+  "stm32f4xx_hal_timebase_tim.c", "FreeRTOSConfig.h"
+]
+```
+
+### 4. 忽略特定文件
+
+在 config.json 中修改 ignore_files 数组，可以精确忽略某些特定文件：
+
+JSON
+
+```
+"ignore_files": [
+  "AI_CodeFeeder.py",
+  "project_context_for_notebooklm.md"
+]
 ```
 
 ## 📝 输出示例 
@@ -140,8 +152,10 @@ C
 
 ## 👨‍💻 版本与作者
 
-**AI_CodeFeeder V1.0.5**
-Coded by **ChaoPhone**
+**AI_CodeFeeder V1.0.8**
+
+
+Updated by **ChaoPhone** on 2026/1/18
 
 ---
 *Happy Coding!*

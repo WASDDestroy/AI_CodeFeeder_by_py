@@ -1,52 +1,48 @@
+#AI_CodeFeeder V1.0.8 (Config Loaded)
+#Coded by ChaoPhone 2026.1.18
+
 import os
+import sys
+import json
 import tkinter as tk
 from tkinter import filedialog
 import subprocess
 
-# --- 配置区域 ---
+# --- 配置区域 (已修改为读取 config.json) ---
 
-# 1. 包含的文件后缀
-ALLOWED_EXTENSIONS = {
-    # 修复了这里的逗号问题
-    '.py', '.java', '.cpp', '.c', '.h', '.js', '.ts', '.html', '.m',
-    '.css', '.sql', '.md', '.yaml', '.yml', '.xml',
-    '.cs', '.shader', '.compute', '.cginc', '.txt'
-}
+# 1. 确定配置文件路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(current_dir, 'config.json')
 
-# 2. 忽略的目录 (针对 STM32/CLion/Unity 深度优化)
-IGNORE_DIRS = {
-    # --- 通用开发垃圾 ---
-    '.git', '.idea', '.vscode', '__pycache__',
-    'venv', 'env', 'node_modules', '.DS_Store',
+# 2. 读取配置
+if not os.path.exists(config_path):
+    print(f"❌ 错误：找不到配置文件 config.json")
+    print(f"请确保文件位于: {current_dir}")
+    input("按回车键退出...")
+    sys.exit(1)
 
-    # --- 编译生成的中间文件 (最占地方) ---
-    'build', 'dist', 'bin', 'obj',
-    'cmake-build-debug', 'cmake-build-release',
-    'gradle', '.gradle',
+try:
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config_data = json.load(f)
+except Exception as e:
+    print(f"❌ 配置文件格式错误: {e}")
+    sys.exit(1)
 
-    # --- Unity 缓存 (如果有 Unity 项目) ---
-    'Library', 'Temp', 'Logs', 'UserSettings', 'Packages',
+# 3. 映射变量 (注意类型转换)
+# Set 用于快速查找 (O(1))
+ALLOWED_EXTENSIONS = set(config_data.get('allowed_extensions', []))
+IGNORE_DIRS = set(config_data.get('ignore_dirs', []))
+IGNORE_FILES = set(config_data.get('ignore_files', []))
 
-    # --- STM32/嵌入式 核心屏蔽区 (关键修改) ---
-    'Drivers', 'Middlewares', 'CMSIS', 'MDK-ARM', 'EWARM',
-    'cmake', 'DebugVals', 'Docs', 'Doc',
-}
+# Tuple 用于 startswith 方法
+IGNORE_PREFIXES = tuple(config_data.get('ignore_prefixes', []))
 
-# 3. 忽略以这些前缀开头的文件 (专门针对 CubeMX 生成的杂文件)
-IGNORE_PREFIXES = {
-    'stm32f4xx_it', 'system_stm32f4xx', 'stm32f4xx_hal_conf',
-    'stm32f4xx_hal_msp', 'sysmem', 'syscalls',
-    'stm32f4xx_hal_timebase_tim.c', 'FreeRTOSConfig.h',
-}
-
-# 4. 忽略的文件
-IGNORE_FILES = {
-    os.path.basename(__file__),
-    'project_context_for_notebooklm.md'
-}
+# 4. 强制忽略脚本自身 (防止递归读取)
+IGNORE_FILES.add(os.path.basename(__file__))
 
 
-# --- 核心逻辑 ---
+
+# --- 核心逻辑  ---
 
 def is_text_file(filename):
     return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
@@ -59,8 +55,11 @@ def get_sorted_file_list(start_path):
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
 
         for f in files:
+            # 1. 检查完全匹配的黑名单
             if f in IGNORE_FILES: continue
             if f.endswith('_Codes.md'): continue
+
+            # 2. 检查前缀黑名单
             if any(f.startswith(prefix) for prefix in IGNORE_PREFIXES): continue
 
             if is_text_file(f):
@@ -96,17 +95,14 @@ def generate_tree(start_path, files_to_include):
 
 def show_file_in_explorer(path):
     """[Windows专用] 打开资源管理器并选中文件"""
-    # 转换为绝对路径并规范化
     abs_path = os.path.abspath(path)
     abs_path = os.path.normpath(abs_path)
 
     print(f"📂 正在打开所在文件夹: {abs_path}")
     try:
-        # 仅在 Windows 下执行
         if os.name == 'nt':
             subprocess.Popen(f'explorer /select,"{abs_path}"')
         else:
-            # Mac/Linux 简单的回退处理 (仅打印路径)
             print("非 Windows 系统，请手动打开目录。")
     except Exception as e:
         print(f"⚠️ 无法自动打开文件夹: {e}")
@@ -137,24 +133,18 @@ def merge_files(start_path, output_path, target_files):
         print(f"\n❌ 写入失败: {e}")
 
 
-def print_clean_config():
-    exts = ", ".join(sorted([e for e in ALLOWED_EXTENSIONS]))
-    dirs = ", ".join(sorted([d for d in IGNORE_DIRS]))
-    print("-" * 50)
-    print(f"包含后缀: {exts}")
-    print(f"忽略目录: {dirs}")
-    print("-" * 50)
 
 
 if __name__ == "__main__":
-    print("AI_CodeFeeder V1.0.7")
-    print("Coded by ChaoPhone")
+    print("-" * 50)
+    print("AI_CodeFeeder V1.0.8 (Config Loaded)")
+    print("Coded by ChaoPhone 2026.1.18")
     print("-" * 50)
 
     # --- 初始化 Tkinter ---
     root = tk.Tk()
     root.withdraw()
-    root.attributes('-topmost', True)  # 窗口置顶
+    root.attributes('-topmost', True)
 
     # 1. 选择目录
     print("等待用户选择目标主目录...")
@@ -162,9 +152,8 @@ if __name__ == "__main__":
 
     if not project_root:
         print("❌ 未选择目录，程序退出。")
-        root.destroy()  # 显式销毁窗口
+        root.destroy()
     else:
-        print_clean_config()
         print("\n🔍 正在预扫描工程...")
         files_to_process = get_sorted_file_list(project_root)
 
@@ -197,4 +186,4 @@ if __name__ == "__main__":
             else:
                 print("操作已取消。")
 
-            root.destroy()  # 程序结束时清理资源
+            root.destroy()
