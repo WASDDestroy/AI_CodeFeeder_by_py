@@ -1,39 +1,35 @@
 {
-  // ==========================================
-  //  AI_CodeFeeder 配置文件
-  // ==========================================
 
-  // 1. 允许分析的代码文件后缀
   "allowed_extensions": [
     ".py", ".java", ".cpp", ".c", ".h", ".js", ".ts", ".html", ".m",
     ".css", ".sql", ".md", ".yaml", ".yml", ".xml",
     ".cs", ".shader", ".compute", ".cginc", ".txt"
   ],
 
-  // 2. 忽略的文件夹 (按项目类型分类)
+
   "ignore_dirs": [
-    // --- 通用开发 ---
+
     ".git", ".idea", ".vscode", "__pycache__", "venv", "env", "node_modules", ".DS_Store",
     
-    // --- 编译产物/中间件 ---
+
     "build", "dist", "bin", "obj", "cmake-build-debug", "cmake-build-release", 
     "gradle", ".gradle",
 
-    // --- Unity 游戏引擎 ---
+
     "Library", "Temp", "Logs", "UserSettings", "Packages",
 
-    // --- STM32 / 嵌入式开发 ---
-    "Drivers",      // HAL库等庞大文件
-    "Middlewares",  // 第三方中间件
-    "CMSIS",        // ARM内核接口
-    "MDK-ARM",      // Keil工程
-    "EWARM",        // IAR工程
-    "cmake",        // CMake脚本
-    "DebugVals",    // 调试数据
-    "Docs", "Doc"   // 文档
+
+    "Drivers",      
+    "Middlewares",  
+    "CMSIS",        
+    "MDK-ARM",     
+    "EWARM",        
+    "cmake",        
+    "DebugVals",    
+    "Docs", "Doc"   
   ],
 
-  // 3. 忽略的文件前缀 (针对 CubeMX 自动生成的杂项文件)
+
   "ignore_prefixes": [
     "stm32f4xx_it", 
     "system_stm32f4xx", 
@@ -45,9 +41,9 @@
     "FreeRTOSConfig.h"
   ],
 
-  // 4. 忽略的具体文件名
+
   "ignore_files": [
-    "AI_CodeFeeder.py",
-    "project_context_for_notebooklm.md"
+    "AI_CodeFeeder.py"
+
   ]
 }
