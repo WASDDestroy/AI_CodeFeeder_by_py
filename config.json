@@ -50,5 +50,10 @@
   "ignore_files": [
     "AI_CodeFeeder.py"
 
+  ],
+
+  "version": [
+    "AI_CodeFeeder V1.1.0",
+    "by ChaoPhone 2026.1.22"
   ]
 }
